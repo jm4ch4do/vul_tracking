@@ -1,10 +1,11 @@
 import datetime as _dt
+import typing as _t
 
 import pydantic as _p
 
 
 class Project(_p.BaseModel):
-    id: str
+    id: _t.Optional[str] = None
     name: str
     description: str
     created_at: _dt.date

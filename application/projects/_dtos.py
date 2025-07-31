@@ -1,6 +1,13 @@
 import datetime as _dt
+import typing as _t
 
 import pydantic as _p
+
+
+class ProjectCreateDTO(_p.BaseModel):
+    name: str
+    description: str
+    created_at: _t.Optional[_dt.date] = _p.Field(default_factory=_dt.date.today)
 
 
 class ProjectOutputDTO(_p.BaseModel):

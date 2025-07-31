@@ -10,4 +10,4 @@ def root():
     return {"message": "Hello from root"}
 
 
-router.include_router(_projects.router, prefix="/api")
+router.include_router(_projects.router)
