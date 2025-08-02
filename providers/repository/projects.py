@@ -1,8 +1,9 @@
 import datetime as _dt
-from providers.repository.base import BaseInMemoryRepo
+import typing as _t
+
 import application.projects as _a_pro
 import domain.project as _d_pro
-import typing as _t
+from providers.repository.base import BaseInMemoryRepo
 
 
 class ProjectRepo(BaseInMemoryRepo[_d_pro.Project], _a_pro.ProjectRepository):

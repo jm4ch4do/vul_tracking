@@ -1,7 +1,7 @@
 import fastapi as _fa
 
-import api.projects as _api_projects
 import api.dependencies as _api_dep
+import api.projects as _api_projects
 
 router = _fa.APIRouter()
 

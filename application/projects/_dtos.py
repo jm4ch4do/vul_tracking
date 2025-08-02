@@ -8,6 +8,17 @@ class ProjectCreateDTO(_p.BaseModel):
     name: str
     description: str
     created_at: _t.Optional[_dt.date] = _p.Field(default_factory=_dt.date.today)
+    dependencies: _t.List[str] = None
+
+    class Config:
+        json_schema_extra = {
+            "example": {
+                "name": "My Test Project",
+                "description": "A sample project for testing dependencies",
+                "created_at": "2025-08-02",
+                "dependencies": ["django==2.2.10", "requests==2.18.4", "pytest==7.4.0"],
+            }
+        }
 
 
 class ProjectOutputDTO(_p.BaseModel):

@@ -1,7 +1,6 @@
+import abc
 import typing as _t
 import uuid as _uuid
-import abc
-
 
 _T = _t.TypeVar("_T")
 

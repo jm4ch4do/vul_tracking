@@ -1,11 +1,13 @@
-from providers.repository.base import BaseInMemoryRepo
+import typing as _t
+
 import application.dependencies as _a_dep
 import domain.dependency as _d_dep
-import typing as _t
+from providers.repository.base import BaseInMemoryRepo
 
 
 class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepository):
 
+    project_id = "project_id"
     name = "name"
     version = "version"
 
@@ -15,6 +17,7 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
     def _to_entity(self, raw: dict) -> _d_dep.Dependency:
         return _d_dep.Dependency(
             id=raw[self.id],
+            project_id=raw[self.project_id],
             name=raw[self.name],
             version=raw[self.version],
         )
@@ -22,6 +25,7 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
     def _serialize(self, entity: _d_dep.Dependency) -> dict:
         return {
             self.id: entity.id,
+            self.project_id: entity.project_id,
             self.name: entity.name,
             self.version: entity.version,
         }
@@ -39,3 +43,8 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
 
     def remove_dependency(self, dependency_id: str) -> bool:
         return self.remove(dependency_id)
+
+    def list_dependencies_by_project_id(
+        self, project_id: str
+    ) -> _t.List[_d_dep.Dependency]:
+        return [dep for dep in self.list_all() if dep.project_id == project_id]

@@ -14,6 +14,7 @@ def step_impl(context, entity_type):
                 "name": row["name"],
                 "description": row["description"],
                 "created_at": row["created_at"],
+                "dependencies": eval(row["dependencies"]),
             }
         elif entity_type == "dependencies":
             payload = {
