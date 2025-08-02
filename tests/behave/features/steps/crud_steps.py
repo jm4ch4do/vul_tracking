@@ -4,15 +4,25 @@ from behave import given, then, when
 BASE_URL = "http://127.0.0.1:8000/"
 
 
-@given("I create a project through the API")
-def step_impl(context):
-    url = f"{BASE_URL}/projects"
+@given('I create a "{entity_type}" through the API')
+def step_impl(context, entity_type):
+    url = f"{BASE_URL}/{entity_type}"
+
     for row in context.table:
-        payload = {
-            "name": row["name"],
-            "description": row["description"],
-            "created_at": row["created_at"],
-        }
+        if entity_type == "projects":
+            payload = {
+                "name": row["name"],
+                "description": row["description"],
+                "created_at": row["created_at"],
+            }
+        elif entity_type == "dependencies":
+            payload = {
+                "name": row["name"],
+                "version": row["version"],
+            }
+        else:
+            raise ValueError(f"Unsupported entity_type: {entity_type}")
+
         response = _requests.post(url, json=payload)
         assert response.status_code == 201
     context.response = response

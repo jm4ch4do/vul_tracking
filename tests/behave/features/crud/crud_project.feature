@@ -1,7 +1,7 @@
-Feature: CRUD projects through the API
+Feature: CRUD dependencies through the API
 
-  Scenario: Creates and lists projects
-    Given I create a project through the API
+  Scenario: Creates and lists dependencies
+    Given I create a "projects" through the API
       | name       | description    | created_at  |
       | Apollo     | Moon mission   | 2024-01-10  |
       | Mars Rover | Exploring Mars | 2024-06-01  |
