@@ -20,3 +20,14 @@ def list_dependencies():
 def scan_dependencies():
     vuls = _a_dep.UpdateVuls()()
     return "Task ran successfully"
+
+
+@router.get(
+    "/dependencies/{dependency_id}",
+    response_model=_a_dep.DependencyAndVulsOutputDTO,
+    summary="Get dependencies details and vulnerabilities",
+)
+def get_dependencies(dependency_id: str):
+    dependency, vuls = _a_dep.GetDependencyById()(dependency_id)
+    vuls_dto = [_a_dep.VulOutputDTO(**vul.dict()) for vul in vuls]
+    return _a_dep.DependencyAndVulsOutputDTO(**dependency.dict(), vuls=vuls_dto)

@@ -12,7 +12,7 @@ class OSVScanner:
 
     def __call__(
         self, dependencies: _t.List[_d_dep.Dependency]
-    ) -> _t.List[_t.Dict[_d_dep.Dependency, _t.List[_d_vul.Vul]]]:
+    ) -> _t.Dict[str, _t.List[_d_vul.Vul]]:
         """Queries osv API for vulnerabilities in the provided 'dependencies' list."""
 
         payload = {
@@ -36,7 +36,7 @@ class OSVScanner:
         self,
         dependencies: _t.List[_d_dep.Dependency],
         raw_results: _t.List[_t.Dict[str, _t.Any]],
-    ) -> _t.List[_t.Dict[_d_dep.Dependency, _t.List[_d_vul.Vul]]]:
+    ) -> _t.Dict[str, _t.List[_d_vul.Vul]]:
 
         results = {}
         now_iso = _dt.datetime.now(_dt.timezone.utc).isoformat()
@@ -53,5 +53,5 @@ class OSVScanner:
                 )
                 formatted_vuls.append(vulnerability)
 
-            results[dep.id] = vuls
+            results[dep.id] = formatted_vuls
         return results

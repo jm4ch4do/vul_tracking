@@ -8,11 +8,9 @@ import domain.vul as _d_vul
 import providers.services.osv as _s_osv
 
 
-class UpdateVuls():
+class UpdateVuls:
 
-    def __call__(
-        self, dependencies: List[Dict[str, str]] = None
-    ) -> List[Dict[str, Any]]:
+    def __call__(self) -> List[Dict[str, Any]]:
         deps = _a_dep.GetDependencies()()
         scanned_deps = ScanDependencies()(deps)
         project_ids, dep_ids = self._find_entities_with_vuls(deps, scanned_deps)
