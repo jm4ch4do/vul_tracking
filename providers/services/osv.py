@@ -3,24 +3,25 @@ import typing as _t
 
 import requests as _requests
 
-import domain.vulnerability as _d_vul
+import domain.dependency as _d_dep
+import domain.vul as _d_vul
 
 
 class OSVScanner:
     API_URL = "https://api.osv.dev/v1/querybatch"
 
     def __call__(
-        self, dependencies: _t.List[_t.Dict[str, str]]
-    ) -> _t.List[_t.Dict[str, _t.Any]]:
+        self, dependencies: _t.List[_d_dep.Dependency]
+    ) -> _t.List[_t.Dict[_d_dep.Dependency, _t.List[_d_vul.Vul]]]:
         """Queries osv API for vulnerabilities in the provided 'dependencies' list."""
+
         payload = {
             "queries": [
                 {
-                    "package": {"name": dep["package"], "ecosystem": "PyPI"},
-                    "version": dep["version"],
+                    "package": {"name": dep.name, "ecosystem": "PyPI"},
+                    "version": dep.version,
                 }
                 for dep in dependencies
-                if dep.get("version")
             ]
         }
 
@@ -33,29 +34,24 @@ class OSVScanner:
 
     def _format_results(
         self,
-        dependencies: _t.List[_t.Dict[str, str]],
+        dependencies: _t.List[_d_dep.Dependency],
         raw_results: _t.List[_t.Dict[str, _t.Any]],
-    ) -> _t.List[_t.Dict[str, _t.Any]]:
+    ) -> _t.List[_t.Dict[_d_dep.Dependency, _t.List[_d_vul.Vul]]]:
 
-        enriched_results = []
+        results = {}
         now_iso = _dt.datetime.now(_dt.timezone.utc).isoformat()
 
         for dep, res in zip(dependencies, raw_results):
-            vulns = res.get("vulns", [])
-            formatted_vulns = []
-            for vuln in vulns:
-                vulnerability = _d_vul.Vulnerability(
-                    vuln_id=vuln.get("id"),
-                    modified=vuln.get("modified"),
+            vuls = res.get("vulns", [])
+            formatted_vuls = []
+            for vul in vuls:
+                vulnerability = _d_vul.Vul(
+                    osv_id=vul.get("id"),
+                    modified=vul.get("modified"),
+                    dependency_id=dep.id,
                     updated=now_iso,
                 )
-                formatted_vulns.append(vulnerability)
+                formatted_vuls.append(vulnerability)
 
-            enriched_result = {
-                "package": dep["package"],
-                "version": dep["version"],
-                "vulnerabilities": formatted_vulns,
-            }
-            enriched_results.append(enriched_result)
-
-        return enriched_results
+            results[dep.id] = vuls
+        return results

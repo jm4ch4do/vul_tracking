@@ -9,9 +9,10 @@ class ProjectCreateDTO(_p.BaseModel):
     description: str
     created_at: _t.Optional[_dt.date] = _p.Field(default_factory=_dt.date.today)
     dependencies: _t.List[str] = None
+    is_vul: bool = False
 
-    class Config:
-        json_schema_extra = {
+    model_config = _p.ConfigDict(
+        json_schema_extra={
             "example": {
                 "name": "My Test Project",
                 "description": "A sample project for testing dependencies",
@@ -19,6 +20,7 @@ class ProjectCreateDTO(_p.BaseModel):
                 "dependencies": ["django==2.2.10", "requests==2.18.4", "pytest==7.4.0"],
             }
         }
+    )
 
 
 class ProjectOutputDTO(_p.BaseModel):
@@ -27,6 +29,7 @@ class ProjectOutputDTO(_p.BaseModel):
     description: str
     created_at: _dt.date
     since_days: _dt.timedelta
+    is_vul: bool
 
     @_p.field_serializer("since_days", return_type=int)
     def serialize_since(self, td: _dt.timedelta, _info):

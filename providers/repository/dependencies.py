@@ -10,6 +10,7 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
     project_id = "project_id"
     name = "name"
     version = "version"
+    is_vul = "is_vul"
 
     def __init__(self) -> None:
         super().__init__()
@@ -20,6 +21,7 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
             project_id=raw[self.project_id],
             name=raw[self.name],
             version=raw[self.version],
+            is_vul=raw[self.is_vul],
         )
 
     def _serialize(self, entity: _d_dep.Dependency) -> dict:
@@ -28,6 +30,7 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
             self.project_id: entity.project_id,
             self.name: entity.name,
             self.version: entity.version,
+            self.is_vul: entity.is_vul,
         }
 
     def list_dependencies(self) -> _t.List[_d_dep.Dependency]:
@@ -48,3 +51,10 @@ class DependencyRepo(BaseInMemoryRepo[_d_dep.Dependency], _a_dep.DependencyRepos
         self, project_id: str
     ) -> _t.List[_d_dep.Dependency]:
         return [dep for dep in self.list_all() if dep.project_id == project_id]
+
+    def toggle_vulnerability(self, project_ids: _t.List[str]) -> None:
+        for project_id in project_ids:
+            project = self.get_by_id(project_id)
+            if project is not None:
+                project.is_vul = not project.is_vul
+                self.update(project)

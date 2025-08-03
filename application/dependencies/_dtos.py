@@ -6,3 +6,4 @@ class DependencyOutputDTO(_p.BaseModel):
     project_id: str
     name: str
     version: str
+    is_vul: bool

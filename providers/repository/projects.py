@@ -11,6 +11,7 @@ class ProjectRepo(BaseInMemoryRepo[_d_pro.Project], _a_pro.ProjectRepository):
     name = "name"
     description = "description"
     created_at = "created_at"
+    is_vul = "is_vul"
 
     def __init__(self) -> None:
         super().__init__()
@@ -21,6 +22,7 @@ class ProjectRepo(BaseInMemoryRepo[_d_pro.Project], _a_pro.ProjectRepository):
             name=raw[self.name],
             description=raw[self.description],
             created_at=_dt.datetime.strptime(raw[self.created_at], "%Y-%m-%d").date(),
+            is_vul=raw[self.is_vul],
         )
 
     def _serialize(self, entity: _d_pro.Project) -> dict:
@@ -29,6 +31,7 @@ class ProjectRepo(BaseInMemoryRepo[_d_pro.Project], _a_pro.ProjectRepository):
             self.name: entity.name,
             self.description: entity.description,
             self.created_at: entity.created_at.isoformat(),
+            self.is_vul: entity.is_vul,
         }
 
     def list_projects(self) -> _t.List[_d_pro.Project]:
@@ -42,3 +45,10 @@ class ProjectRepo(BaseInMemoryRepo[_d_pro.Project], _a_pro.ProjectRepository):
 
     def remove_project(self, project_id: str) -> bool:
         return self.remove(project_id)
+
+    def toggle_vulnerability(self, project_ids: _t.List[str]) -> None:
+        for project_id in project_ids:
+            project = self.get_by_id(project_id)
+            if project is not None:
+                project.is_vul = not project.is_vul
+                self.update(project)

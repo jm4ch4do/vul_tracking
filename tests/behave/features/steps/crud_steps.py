@@ -1,7 +1,23 @@
+import json as _json
+
 import requests as _requests
 from behave import given, then, when
 
 BASE_URL = "http://127.0.0.1:8000/"
+
+
+def parse_literal(value: str):
+    lowered = value.lower()
+    if lowered == "true":
+        return True
+    if lowered == "false":
+        return False
+    if lowered == "null":
+        return None
+    try:
+        return _json.loads(value)
+    except (ValueError, TypeError):
+        return value
 
 
 @given('I create a "{entity_type}" through the API')
@@ -66,3 +82,19 @@ def step_impl(context, entity):
         assert any(
             match_records(act, exp) for act in actual
         ), f"Missing {entity} record: {exp}"
+
+
+@then('response contains "{count:d}" records with "{field}" set to "{expected_value}"')
+def step_impl(context, count, field, expected_value):
+    assert context.response.status_code == 200
+    data = context.response.json()
+    assert isinstance(data, list), "Expected response to be a list"
+
+    expected = parse_literal(expected_value)
+
+    matched = [item for item in data if item.get(field) == expected]
+
+    assert len(matched) == count, (
+        f'Expected {count} records with "{field}" == {expected!r}, '
+        f"but found {len(matched)}.\nMatching items: {matched}"
+    )

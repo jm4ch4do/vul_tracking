@@ -1,20 +1,29 @@
-import application.dependencies.scan as _scan
+import application.dependencies as _a_dep
+import domain.dependency as _d_dep
 
 
 def test_scan_dependencies_returns_vulnerabilities():
+
     dependencies = [
-        {"package": "Django", "version": "3.2.0"},
-        {"package": "requests", "version": "2.25.0"},
+        _d_dep.Dependency(
+            id="d1",
+            project_id="p1",
+            name="django",
+            version="2.2.10",
+        ),
+        _d_dep.Dependency(
+            id="d2",
+            project_id="p2",
+            name="requests",
+            version="2.18.4",
+        ),
     ]
 
-    scanner = _scan.ScanDependencies()
+    scanner = _a_dep.ScanDependencies()
     result = scanner(dependencies)
 
-    assert isinstance(result, list)
-    assert all("package" in v for v in result)
-    assert all("version" in v for v in result)
-    assert all("vulnerabilities" in v for v in result)
+    assert len(result) == 2
+    assert "d1" in result
+    assert "d2" in result
 
-    django_vuls = next((v for v in result if v["package"] == "Django"), None)
-    assert django_vuls is not None
-    assert len(django_vuls["vulnerabilities"]) > 0
+    assert any(len(v) > 1 for v in result.values())

@@ -38,6 +38,17 @@ class BaseInMemoryRepo(_t.Generic[_T]):
     def clear(self) -> None:
         self._storage.clear()
 
+    def update(self, entity: _T) -> bool:
+        entity_id = getattr(entity, self.id, None)
+        if not entity_id:
+            return False
+
+        for i, raw in enumerate(self._storage):
+            if raw[self.id] == entity_id:
+                self._storage[i] = self._serialize(entity)
+                return True
+        return False
+
     def populate(self, entities: _t.List[_T]) -> None:
         self._storage = [self._serialize(entity) for entity in entities]
 
